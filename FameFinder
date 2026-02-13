@@ -1,0 +1,6 @@
+FameFinder is an interactive guessing game inspired by the concept used in games such as Akinator, but uniquely designed to focus on Pakistani celebrities.
+In this game, the user thinks of a famous Pakistani personality while the system attempts to guess the correct person by asking a series of intelligent and well-structured questions
+based on attributes such as gender, profession, era of fame, and popularity. A structured database of Pakistani celebrities, including well-known figures such as Atif Aslam, Mahira Khan, and Babar Azam,
+will be used to store this information and allow the system to narrow down possible options after each user response. The project will be developed using C++ as the core programming language along with
+a graphical user interface to provide a smooth and engaging gaming experience, including interactive question screens and a final reveal of the guessed celebrity.
+By combining gaming mechanics, intelligent decision-making logic, and Pakistani cultural representation, PakStar Guess aims to deliver a fun, innovative, and meaningful hackathon project.
