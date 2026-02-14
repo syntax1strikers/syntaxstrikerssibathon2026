@@ -76,6 +76,7 @@ body{
   font-size:20px;
   margin-bottom:20px;
   min-height:60px;
+  text-align:center;
 }
 
 .buttons{
@@ -129,6 +130,30 @@ body{
 .pill span{
   color:var(--muted);
 }
+
+.final-guess{
+  text-align:center;
+  margin-top:20px;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.final-guess h2{
+  font-size:20px;
+  color:var(--muted);
+  margin-bottom:15px;
+}
+
+.final-guess h1{
+  font-size:48px;
+  color:var(--purple);
+  margin:0;
+  letter-spacing:3px;
+}
+
+@keyframes fadeIn{
+  from{opacity:0; transform:scale(0.9);}
+  to{opacity:1; transform:scale(1);}
+}
 </style>
 </head>
 
@@ -142,7 +167,6 @@ body{
 
   <div class="main-grid">
 
-    <!-- LEFT SIDE GAME -->
     <div class="card">
       <div class="question" id="question">
         Think of a celebrity... <br><br>
@@ -155,7 +179,6 @@ body{
       </div>
     </div>
 
-    <!-- RIGHT SIDE LIST -->
     <div class="card">
       <h3 style="color:var(--purple); margin-top:0;">Celebrities in Game</h3>
       <ul class="list">
@@ -193,15 +216,23 @@ let questions = [
   "Have they worked in India?"
 ];
 
+let finalGuess = "Atif Aslam";
+
 let current = 0;
 
 function answer(choice){
   current++;
+
   if(current < questions.length){
     document.getElementById("question").innerHTML = questions[current];
-  } else {
-    document.getElementById("question").innerHTML =
-      "I think I know who it is... 😏";
+  }
+  else{
+    document.getElementById("question").innerHTML = `
+      <div class="final-guess">
+        <h2>I think you are talking about...</h2>
+        <h1>${finalGuess}</h1>
+      </div>
+    `;
   }
 }
 </script>
