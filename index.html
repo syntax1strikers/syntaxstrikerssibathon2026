@@ -1,333 +1,360 @@
-<script>
-// ====== DATA (same idea as your C++ facts) ======
-const people = [
-  { name:"Atif Aslam", fact:{
-    is_male:true,is_singer:true,worked_in_india:true,worked_in_coke_studio:true,
-    song_tajdare_haram:true,song_dil_diyan_gallan:true,married:true
-  }},
-  { name:"Mahira Khan", fact:{
-    is_male:false,is_singer:false,worked_in_india:true,drama_humsafar:true,
-    worked_with_shah_rukh:true,best_couple_fawad:true,married:true
-  }},
-  { name:"Ayeza Khan", fact:{
-    is_male:false,is_singer:false,worked_in_india:false,drama_mere_pas_tum_ho:true,
-    drama_pyare_afzal:true,married_to_danish:true,married:true
-  }},
-  { name:"Feroz Khan", fact:{
-    is_male:true,is_singer:false,worked_in_india:false,drama_khaani:true,
-    drama_khuda_aur_mohabbat:true,serious_roles:true,rel_with_sajal:true,married:true
-  }},
-  { name:"Danish Taimoor", fact:{
-    is_male:true,is_singer:false,worked_in_india:false,drama_sher:true,
-    serious_roles:true,husband_of_ayeza:true,married:true
-  }},
-  { name:"Imran Abbas", fact:{
-    is_male:true,is_singer:false,worked_in_india:true,drama_khuda_aur_mohabbat:true,
-    movie_creature_3d:true,married:false
-  }},
-  { name:"Hamza Ali Abbasi", fact:{
-    is_male:true,is_singer:false,worked_in_india:false,drama_pyare_afzal:true,
-    movie_maula_jutt:true,movie_jawani_phir_nahi_ani:true,married:true
-  }},
-  { name:"Sajal Aly", fact:{
-    is_male:false,is_singer:false,worked_in_india:false,drama_yaqeen_ka_safar:true,
-    married_ahad_then_divorced:true,married:false
-  }},
-  { name:"Asim Azhar", fact:{
-    is_male:true,is_singer:true,worked_in_india:true,worked_in_coke_studio:true,
-    song_tera_woh_pyar:true,wears_glasses:true,engaged_meerub:true,married:false,
-    rel_with_hania:true
-  }},
-  { name:"Hania Amir", fact:{
-    is_male:false,is_singer:false,worked_in_india:false,drama_kabhi_main_kabhi_tum:true,
-    rel_with_asim:true,known_dimple_queen:true,married:false
-  }},
-  { name:"Bilal Abbas", fact:{
-    is_male:true,is_singer:false,worked_in_india:false,drama_ishq_murshid:true,
-    rumoured_with_durefishan:true,married:false
-  }},
-  { name:"Ali Zafar", fact:{
-    is_male:true,is_singer:true,worked_in_india:true,song_provinces_pakistan:true,
-    movie_mere_brother_ki_dulhan:true,brother_danyal:true,married:false
-  }},
-  { name:"Saba Qamar", fact:{
-    is_male:false,is_singer:false,worked_in_india:true,drama_baaghi:true,
-    strong_female_roles:true,movie_hindi_medium:true,married:false
-  }},
-  { name:"Yumna Zaidi", fact:{
-    is_male:false,is_singer:false,worked_in_india:false,drama_tere_bin:true,
-    drama_sinf_e_ahan:true,best_couple_wahaj:true,married:false
-  }},
-  { name:"Shoaib Malik", fact:{
-    is_male:true,is_cricketer:true,retired:true,ex_husband_of_sania:true,
-    married_to_sana_javed:true,married:true
-  }},
-  { name:"Shahid Afridi", fact:{
-    is_male:true,is_cricketer:true,retired:true,son_in_law_shaheen:true,
-    nickname_lala_boom_boom:true,pathan:true,married:true
-  }},
-  { name:"Babar Azam", fact:{
-    is_male:true,is_cricketer:true,ex_captain_pakistan:true,meme_with_hania:true,
-    trolled_weak_english:true,married:false
-  }},
-  { name:"Naseem Shah", fact:{
-    is_male:true,is_cricketer:true,clean_shaved:true,rumoured_with_urvashi:true,
-    married:false
-  }},
-  { name:"Sana Javed", fact:{
-    is_male:false,is_singer:false,worked_in_india:false,drama_khaani:true,
-    ex_husband_umair_jaiswal:true,married_to_shoaib_malik:true,married:true
-  }},
-  { name:"Sparrow", fact:{
-    is_male:true,is_influencer:true,makes_instagram_reels:true,wears_abaya:true,
-    dialogue_hum_mazhabi_gharane:true,dialogue_ouch_ouch:true,married:false
-  }},
-];
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FameFinder</title>
 
-// ====== QUESTIONS (include your "apple/spicy" ones) ======
-const questions = [
-  // general
-  {key:"is_male", prompt:"Is your celebrity male?", isGeneral:true},
-  {key:"is_cricketer", prompt:"Are they known as a cricketer?", isGeneral:true},
-  {key:"is_influencer", prompt:"Are they an influencer / content creator?", isGeneral:true},
-  {key:"is_singer", prompt:"Are they primarily known as a singer?", isGeneral:true},
-  {key:"worked_in_india", prompt:"Have they worked in India / Indian projects?", isGeneral:true},
-
-  // spicy / apple-like
-  {key:"worked_in_coke_studio", prompt:"Have they worked in Coke Studio?", spicy:true},
-  {key:"song_tajdare_haram", prompt:"Is their signature song 'Tajdar-e-Haram'?", spicy:true},
-  {key:"song_dil_diyan_gallan", prompt:"Is their signature song 'Dil Diyan Gallan'?", spicy:true},
-  {key:"song_tera_woh_pyar", prompt:"Is their signature song 'Tera Woh Pyar'?", spicy:true},
-  {key:"drama_humsafar", prompt:"Is their signature drama 'Humsafar'?", spicy:true},
-  {key:"drama_mere_pas_tum_ho", prompt:"Is their signature drama 'Mere Paas Tum Ho'?", spicy:true},
-  {key:"drama_pyare_afzal", prompt:"Is their signature drama 'Pyare Afzal'?", spicy:true},
-  {key:"drama_khaani", prompt:"Is their signature drama 'Khaani'?", spicy:true},
-  {key:"drama_yaqeen_ka_safar", prompt:"Is their signature drama 'Yaqeen Ka Safar'?", spicy:true},
-  {key:"drama_ishq_murshid", prompt:"Is their signature drama 'Ishq Murshid'?", spicy:true},
-  {key:"drama_baaghi", prompt:"Is their signature drama 'Baaghi'?", spicy:true},
-  {key:"drama_tere_bin", prompt:"Is their signature drama 'Tere Bin'?", spicy:true},
-  {key:"drama_sinf_e_ahan", prompt:"Have they worked in 'Sinf-e-Aahan'?", spicy:true},
-  {key:"best_couple_wahaj", prompt:"Are they famous as an on-screen couple with Wahaj Ali?", spicy:true},
-  {key:"worked_with_shah_rukh", prompt:"Have they worked with Shah Rukh Khan?", spicy:true},
-  {key:"best_couple_fawad", prompt:"Are they best known as an on-screen couple with Fawad Khan?", spicy:true},
-  {key:"married_to_danish", prompt:"Are they married to Danish Taimoor?", spicy:true},
-  {key:"husband_of_ayeza", prompt:"Are they Ayeza Khan's husband?", spicy:true},
-  {key:"rel_with_sajal", prompt:"Were they in a relationship with Sajal Aly?", spicy:true},
-  {key:"rel_with_asim", prompt:"Were they in a relationship with Asim Azhar?", spicy:true},
-  {key:"rel_with_hania", prompt:"Were they in a relationship with Hania Amir?", spicy:true},
-  {key:"engaged_meerub", prompt:"Were they engaged to Meerub Ali?", spicy:true},
-  {key:"married_ahad_then_divorced", prompt:"Were they married to Ahad Raza Mir (and later divorced)?", spicy:true},
-  {key:"wears_glasses", prompt:"Do they often wear glasses?", spicy:true},
-  {key:"known_dimple_queen", prompt:"Are they known as the 'Dimple Queen'?", spicy:true},
-  {key:"rumoured_with_durefishan", prompt:"Were they rumoured to be with Dur-e-Fishan?", spicy:true},
-  {key:"brother_danyal", prompt:"Is their brother Danyal Zafar?", spicy:true},
-  {key:"movie_mere_brother_ki_dulhan", prompt:"Did they work in 'Mere Brother Ki Dulhan'?", spicy:true},
-  {key:"movie_hindi_medium", prompt:"Did they work in the movie 'Hindi Medium'?", spicy:true},
-  {key:"movie_creature_3d", prompt:"Did they work in the Indian movie 'Creature 3D'?", spicy:true},
-
-  // cricketer spicy
-  {key:"retired", prompt:"Are they retired?", spicy:true},
-  {key:"ex_husband_of_sania", prompt:"Are they the ex-husband of Sania Mirza?", spicy:true},
-  {key:"married_to_sana_javed", prompt:"Are they married to Sana Javed?", spicy:true},
-  {key:"son_in_law_shaheen", prompt:"Is their son-in-law Shaheen Afridi?", spicy:true},
-  {key:"nickname_lala_boom_boom", prompt:"Are they known as 'Lala / Boom Boom'?", spicy:true},
-  {key:"pathan", prompt:"Are they Pathan?", spicy:true},
-  {key:"ex_captain_pakistan", prompt:"Were they an ex-captain of Pakistan?", spicy:true},
-  {key:"meme_with_hania", prompt:"Are they famous for a meme-relationship with Hania Amir?", spicy:true},
-  {key:"trolled_weak_english", prompt:"Are they trolled for weak English?", spicy:true},
-  {key:"clean_shaved", prompt:"Are they known for being clean-shaved?", spicy:true},
-  {key:"rumoured_with_urvashi", prompt:"Were they rumoured with Urvashi Rautela?", spicy:true},
-
-  // influencer spicy
-  {key:"makes_instagram_reels", prompt:"Do they make Instagram reels?", spicy:true},
-  {key:"dialogue_ouch_ouch", prompt:"Are they known for saying 'Ouch Ouch' in videos?", spicy:true},
-  {key:"dialogue_hum_mazhabi_gharane", prompt:"Are they known for the dialogue 'Hum Mazhabi Gharane Se Hain'?", spicy:true},
-  {key:"wears_abaya", prompt:"Do they wear an abaya in their videos?", spicy:true},
-
-  // simple readable
-  {key:"married", prompt:"Are they married?", spicy:true},
-];
-
-// ====== GAME STATE ======
-let candidates = people.map((_, i) => i);
-let asked = new Set();
-let known = {}; // key -> true/false
-let mode = "question"; // "question" or "guess"
-let currentQ = null;
-let currentGuessIdx = null;
-let closeExtraAsked = 0;
-
-const CLOSE_THRESHOLD = 3;
-const SHOWY_QUESTIONS = 3;
-
-const qEl = document.getElementById("question");
-
-// ====== HELPERS ======
-function filterCandidatesByAnswer(key, ansBool){
-  const out = [];
-  for(const idx of candidates){
-    const f = people[idx].fact;
-    if(!(key in f)) out.push(idx);               // unknown => keep
-    else if(f[key] === ansBool) out.push(idx);   // match
-  }
-  candidates = out;
-}
-
-function bestGuess(){
-  let best = candidates[0], bestScore = -1;
-  for(const idx of candidates){
-    let score = 0;
-    for(const k in known){
-      const f = people[idx].fact;
-      if(k in f && f[k] === known[k]) score++;
-    }
-    if(score > bestScore){
-      bestScore = score;
-      best = idx;
-    }
-  }
-  return best;
-}
-
-function pickBestQuestion(closeMode){
-  let best = null;
-  let bestScore = -1;
-
-  for(const q of questions){
-    if(asked.has(q.key)) continue;
-    if(closeMode && !q.spicy) continue;
-    if(closeMode && q.isGeneral) continue;
-
-    let t=0,f=0,u=0;
-    for(const idx of candidates){
-      const facts = people[idx].fact;
-      if(!(q.key in facts)) u++;
-      else if(facts[q.key]) t++;
-      else f++;
+  <style>
+    :root{
+      --bg:#000;
+      --panel:#0b0013;
+      --panel2:#12001f;
+      --purple:#b84dff;
+      --text:#eadcff;
+      --muted:#c9b2ea;
+      --border:rgba(184,77,255,.35);
     }
 
-    if(u > candidates.length * 0.7) continue;
-
-    const split = Math.min(t, f);
-    let score = split * 10 - u;
-
-    if(!closeMode && q.isGeneral) score += 2;
-
-    // Make spicy more likely near end
-    if(closeMode){
-      score += 12; // base boost for close mode
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(184,77,255,.18), transparent 55%),
+        radial-gradient(900px 600px at 80% 30%, rgba(122,44,255,.16), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
     }
 
-    if(score > bestScore){
-      bestScore = score;
-      best = q;
+    .wrap{ width:min(980px, 100%); display:grid; gap:18px; }
+
+    .header{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(184,77,255,.10), rgba(18,0,31,.75));
+      border-radius:16px;
+      padding:18px;
+      box-shadow: 0 20px 80px rgba(0,0,0,.65);
+      text-align:center;
     }
-  }
-  return best;
-}
-
-function renderQuestion(){
-  if(candidates.length === 0){
-    qEl.innerHTML = "Hmm, I couldn't match it. Add more facts.";
-    mode = "done";
-    return;
-  }
-
-  // close mode -> ask 1..3 spicy questions before guessing
-  if(candidates.length <= CLOSE_THRESHOLD){
-    if(closeExtraAsked < SHOWY_QUESTIONS && candidates.length > 1){
-      currentQ = pickBestQuestion(true);
-      if(currentQ){
-        qEl.innerHTML = currentQ.prompt;
-        mode = "question";
-        return;
-      }
+    .title{
+      margin:0;
+      color:var(--purple);
+      letter-spacing:.8px;
+      text-transform:uppercase;
+      font-size:28px;
     }
 
-    currentGuessIdx = bestGuess();
-    mode = "guess";
-    qEl.innerHTML = `
-      <div class="final-guess">
-        <h2>I think you are talking about...</h2>
-        <h1>${people[currentGuessIdx].name}</h1>
+    .grid{
+      display:grid;
+      gap:18px;
+      grid-template-columns: 1.2fr .8fr;
+    }
+    @media (max-width: 900px){ .grid{ grid-template-columns:1fr; } }
+
+    .card{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(11,0,19,.92), rgba(18,0,31,.75));
+      border-radius:16px;
+      padding:16px;
+    }
+
+    .card h3{
+      margin:0 0 10px;
+      color:var(--purple);
+      text-transform:uppercase;
+      font-size:13px;
+      letter-spacing:.7px;
+    }
+
+    /* LEFT GAME UI */
+    .questionArea{
+      min-height:180px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:14px;
+      border-radius:14px;
+      border:1px solid rgba(184,77,255,.25);
+      background: rgba(0,0,0,.35);
+      font-size:20px;
+      line-height:1.4;
+    }
+
+    .buttons{
+      margin-top:14px;
+      display:flex;
+      gap:12px;
+    }
+
+    .btn{
+      flex:1;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(184,77,255,.35);
+      background: linear-gradient(180deg, rgba(184,77,255,.12), rgba(122,44,255,.06));
+      color:var(--text);
+      font-weight:700;
+      cursor:pointer;
+      user-select:none;
+      transition:0.2s;
+      text-align:center;
+    }
+    .btn:hover{
+      transform:scale(1.03);
+      box-shadow:0 0 14px rgba(184,77,255,.35);
+    }
+
+    /* Big guess view */
+    .guessBox{
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    .guessBox .small{
+      color:var(--muted);
+      font-size:18px;
+      margin-bottom:10px;
+    }
+    .guessBox .bigName{
+      color:var(--purple);
+      font-size:44px;
+      letter-spacing:2px;
+      font-weight:900;
+    }
+
+    @keyframes fadeIn{
+      from{opacity:0; transform:scale(.96);}
+      to{opacity:1; transform:scale(1);}
+    }
+
+    /* RIGHT LIST */
+    .list{ margin:0; padding:0; list-style:none; display:grid; gap:8px; }
+    .pill{
+      border:1px solid rgba(184,77,255,.25);
+      background: linear-gradient(180deg, rgba(184,77,255,.08), rgba(122,44,255,.06));
+      border-radius:12px;
+      padding:10px 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .pill b{ color:var(--text); }
+    .pill span{ color:var(--muted); }
+
+    /* Play again modal */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.6);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+    .overlay.show{ display:flex; }
+
+    .modal{
+      width:min(420px, 100%);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:16px;
+      background: linear-gradient(180deg, rgba(11,0,19,.95), rgba(18,0,31,.85));
+      box-shadow:0 20px 80px rgba(0,0,0,.7);
+      text-align:center;
+    }
+    .modal h2{
+      margin:0 0 8px;
+      color:var(--purple);
+      letter-spacing:.6px;
+    }
+    .modal p{
+      margin:0 0 14px;
+      color:var(--muted);
+    }
+    .smallBtns{
+      display:flex;
+      gap:10px;
+    }
+    .smallBtn{
+      flex:1;
+      padding:10px;
+      border-radius:12px;
+      border:1px solid rgba(184,77,255,.35);
+      background: rgba(0,0,0,.35);
+      cursor:pointer;
+      font-weight:700;
+      transition:.2s;
+    }
+    .smallBtn:hover{
+      background: linear-gradient(180deg, rgba(184,77,255,.12), rgba(122,44,255,.06));
+      transform:scale(1.03);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header">
+      <h1 class="title">FameFinder</h1>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT SIDE: UI GAME -->
+      <div class="card">
+        <h3>Game</h3>
+
+        <div class="questionArea" id="screen">
+          Think of a celebrity from the list.<br><br>
+          Is your celebrity male?
+        </div>
+
+        <div class="buttons">
+          <div class="btn" onclick="pressYes()">YES</div>
+          <div class="btn" onclick="pressNo()">NO</div>
+        </div>
       </div>
-    `;
-    return;
-  }
 
-  // normal mode question
-  currentQ = pickBestQuestion(false);
-  if(!currentQ){
-    // if no question found, guess anyway
-    currentGuessIdx = bestGuess();
-    mode = "guess";
-    qEl.innerHTML = `
-      <div class="final-guess">
-        <h2>I think you are talking about...</h2>
-        <h1>${people[currentGuessIdx].name}</h1>
+      <!-- RIGHT SIDE: LIST -->
+      <div class="card">
+        <h3>Celebrities in Game</h3>
+        <ul class="list">
+          <li class="pill"><b>Atif Aslam</b><span>Singer</span></li>
+          <li class="pill"><b>Mahira Khan</b><span>Actor</span></li>
+          <li class="pill"><b>Ayeza Khan</b><span>Actor</span></li>
+          <li class="pill"><b>Feroz Khan</b><span>Actor</span></li>
+          <li class="pill"><b>Danish Taimoor</b><span>Actor</span></li>
+          <li class="pill"><b>Imran Abbas</b><span>Actor</span></li>
+          <li class="pill"><b>Hamza Ali Abbasi</b><span>Actor</span></li>
+          <li class="pill"><b>Sajal Aly</b><span>Actor</span></li>
+          <li class="pill"><b>Asim Azhar</b><span>Singer</span></li>
+          <li class="pill"><b>Hania Amir</b><span>Actor</span></li>
+          <li class="pill"><b>Bilal Abbas</b><span>Actor</span></li>
+          <li class="pill"><b>Ali Zafar</b><span>Singer</span></li>
+          <li class="pill"><b>Saba Qamar</b><span>Actor</span></li>
+          <li class="pill"><b>Yumna Zaidi</b><span>Actor</span></li>
+          <li class="pill"><b>Shoaib Malik</b><span>Cricketer</span></li>
+          <li class="pill"><b>Shahid Afridi</b><span>Cricketer</span></li>
+          <li class="pill"><b>Babar Azam</b><span>Cricketer</span></li>
+          <li class="pill"><b>Naseem Shah</b><span>Cricketer</span></li>
+          <li class="pill"><b>Sana Javed</b><span>Actor</span></li>
+          <li class="pill"><b>Sparrow</b><span>Influencer</span></li>
+        </ul>
       </div>
-    `;
-    return;
-  }
+    </div>
+  </div>
 
-  mode = "question";
-  qEl.innerHTML = currentQ.prompt;
-}
+  <!-- PLAY AGAIN MODAL -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h2>Play Again?</h2>
+      <p>Do you want to start a new round?</p>
+      <div class="smallBtns">
+        <div class="smallBtn" onclick="playAgainYes()">YES</div>
+        <div class="smallBtn" onclick="playAgainNo()">NO</div>
+      </div>
+    </div>
+  </div>
 
-function resetRound(){
-  candidates = people.map((_, i) => i);
-  asked = new Set();
-  known = {};
-  mode = "question";
-  currentQ = null;
-  currentGuessIdx = null;
-  closeExtraAsked = 0;
-  renderQuestion();
-}
+  <script>
+    // UI-only demo flow (no real C++ logic on GitHub Pages)
+    const demoQuestions = [
+      "Is your celebrity male?",
+      "Are they a cricketer?",
+      "Are they primarily known as a singer?",
+      "Have they worked in India?",
+      "Are they married?"
+    ];
 
-// ====== BUTTON ACTION ======
-function answer(choice){
-  if(mode === "done") return;
+    // Demo guess list (rotates when user clicks NO on guess)
+    const demoGuesses = [
+      "Atif Aslam","Mahira Khan","Ayeza Khan","Feroz Khan","Danish Taimoor",
+      "Imran Abbas","Hamza Ali Abbasi","Sajal Aly","Asim Azhar","Hania Amir",
+      "Bilal Abbas","Ali Zafar","Saba Qamar","Yumna Zaidi","Shoaib Malik",
+      "Shahid Afridi","Babar Azam","Naseem Shah","Sana Javed","Sparrow"
+    ];
 
-  // When showing a guess:
-  if(mode === "guess"){
-    if(choice === "yes"){
-      qEl.innerHTML = `
-        <div class="final-guess">
-          <h2>Yay! I got it 😄</h2>
-          <h1>${people[currentGuessIdx].name}</h1>
+    let qIndex = 0;
+    let gIndex = 0;
+    let phase = "questions"; // "questions" or "guess"
+
+    const screen = document.getElementById("screen");
+    const overlay = document.getElementById("overlay");
+
+    function showQuestion(){
+      phase = "questions";
+      screen.innerHTML = demoQuestions[qIndex];
+    }
+
+    function showGuess(){
+      phase = "guess";
+      const name = demoGuesses[gIndex];
+      screen.innerHTML = `
+        <div class="guessBox">
+          <div class="small">I think you are talking about...</div>
+          <div class="bigName">${name}</div>
         </div>
       `;
-      mode = "done";
-      return;
-    } else {
-      // NO -> remove that guess and continue
-      candidates = candidates.filter(i => i !== currentGuessIdx);
-      closeExtraAsked = 0; // continue asking more spicy questions
-      mode = "question";
-      renderQuestion();
-      return;
     }
-  }
 
-  // Normal question answering:
-  if(!currentQ){
-    renderQuestion();
-    return;
-  }
+    function pressYes(){
+      if(phase === "questions"){
+        qIndex++;
+        if(qIndex < demoQuestions.length){
+          showQuestion();
+        }else{
+          showGuess();
+        }
+        return;
+      }
 
-  const ansBool = (choice === "yes");
-  asked.add(currentQ.key);
-  known[currentQ.key] = ansBool;
-  filterCandidatesByAnswer(currentQ.key, ansBool);
+      // phase === "guess" and YES means correct
+      overlay.classList.add("show");
+    }
 
-  if(candidates.length <= CLOSE_THRESHOLD) closeExtraAsked++;
-  renderQuestion();
-}
+    function pressNo(){
+      if(phase === "questions"){
+        qIndex++;
+        if(qIndex < demoQuestions.length){
+          showQuestion();
+        }else{
+          showGuess();
+        }
+        return;
+      }
 
-// Make answer() available to HTML buttons
-window.answer = answer;
+      // phase === "guess" and NO means wrong -> rotate guess and keep going
+      gIndex = (gIndex + 1) % demoGuesses.length;
 
-// Start
-renderQuestion();
-</script>
+      // After wrong guess, continue with 1-2 more questions then guess again (UI feel)
+      qIndex = Math.max(demoQuestions.length - 2, 0);
+      showQuestion();
+    }
+
+    function playAgainYes(){
+      overlay.classList.remove("show");
+      qIndex = 0;
+      gIndex = 0;
+      showQuestion();
+    }
+
+    function playAgainNo(){
+      overlay.classList.remove("show");
+      screen.innerHTML = `
+        <div class="guessBox">
+          <div class="small">Thank you for playing!</div>
+          <div class="bigName">FameFinder</div>
+        </div>
+      `;
+      phase = "done";
+    }
+
+    // Start
+    showQuestion();
+  </script>
+</body>
+</html>
