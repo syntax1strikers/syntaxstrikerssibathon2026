@@ -344,3 +344,117 @@ static bool ask_one_question(vector<int> &candidates,
             if(q.key.find("abaya") != string::npos) score += 14;
             if(q.key.find("nickname") != string::npos) score += 14;
         }
+if(score > bestScore){
+            bestScore = score;
+            bestQ = qi;
+        }	
+    }
+
+    if(bestQ == -1) return false;
+
+    const auto &q = questions[bestQ];
+    asked.insert(q.key);
+
+    cout << q.prompt << flush;
+    string ans; cin >> ans;
+    ans = normalizeYN(ans);
+    if(ans != "yes" && ans != "no" && ans != "unknown") ans = "unknown";
+
+    known[q.key] = ans;
+    candidates = filter_candidates(candidates, q.key, ans);
+    return true;
+}
+
+static void play_one_round(){
+    vector<int> candidates;
+    for(int i=0;i<(int)people.size();i++) candidates.push_back(i);
+
+    unordered_set<string> asked;
+    unordered_map<string,string> known;
+
+    const int CLOSE_THRESHOLD = 3;
+    const int SHOWY_QUESTIONS = 3;
+
+    for(int step=0; step<40; step++){
+        if(candidates.empty()){
+            cout << "Hmm, I couldn't match it. Add more facts.\n";
+            return;
+        }
+
+        if((int)candidates.size() <= CLOSE_THRESHOLD){
+            int extra = 0;
+            while(extra < SHOWY_QUESTIONS && candidates.size() > 1){
+                bool askedSomething = ask_one_question(candidates, asked, known, /*close_mode=*/true);
+                if(!askedSomething) break;
+                extra++;
+                if(candidates.empty()){
+                    cout << "Hmm, I couldn't match it. Add more facts.\n";
+                    return;
+                }
+            }
+
+            int g = best_guess(candidates, known);
+            cout << "Are you thinking of " << people[g].name << "? (y/n): " << flush;
+            string ok; cin >> ok; ok = normalizeYN(ok);
+
+            if(ok == "yes"){
+                cout << "Yay! I got it.\n";
+                return;
+            } else {
+                candidates.erase(remove(candidates.begin(), candidates.end(), g), candidates.end());
+                if(candidates.empty()){
+                    cout << "Okay, I couldn't match it. Add more people/facts.\n";
+                    return;
+                }
+                continue;
+            }
+        }
+
+        bool askedSomething = ask_one_question(candidates, asked, known, /*close_mode=*/false);
+        if(!askedSomething){
+            int g = best_guess(candidates, known);
+            cout << "Are you thinking of " << people[g].name << "? (y/n): " << flush;
+            string ok; cin >> ok; ok = normalizeYN(ok);
+
+            if(ok == "yes"){
+                cout << "Yay! I got it.\n";
+                return;
+            } else {
+                candidates.erase(remove(candidates.begin(), candidates.end(), g), candidates.end());
+                continue;
+            }
+        }
+    }
+
+    int g = best_guess(candidates, known);
+    cout << "My final guess: " << people[g].name << "\n";
+}
+
+int main(){
+    init_questions();
+    init_people();
+
+    cout << "Pakistani Celebrity Akinator (Yes/No)\n\n";
+
+    // ✅ show list at the start
+    show_celeb_list();
+
+    cout << "Think of a celebrity from the list above. Answer y/n (or 'unknown' to skip).\n\n";
+
+    while(true){
+        play_one_round();
+
+        cout << "\nDo you want to play again? (y/n): " << flush;
+        string again; cin >> again; again = normalizeYN(again);
+
+        if(again != "yes"){
+            cout << "Thank you!\n";
+            break;
+        }
+
+        cout << "\nOkay! Think of a new celebrity from the list.\n\n";
+    }
+
+    return 0;
+}
+
