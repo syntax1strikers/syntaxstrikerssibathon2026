@@ -72,9 +72,9 @@
       letter-spacing:.7px;
     }
 
-    /* LEFT GAME UI */
+    /* Left Game */
     .questionArea{
-      min-height:180px;
+      min-height:190px;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -111,10 +111,7 @@
       box-shadow:0 0 14px rgba(184,77,255,.35);
     }
 
-    /* Big guess view */
-    .guessBox{
-      animation: fadeIn 0.5s ease-in-out;
-    }
+    .guessBox{ animation: fadeIn 0.45s ease-in-out; }
     .guessBox .small{
       color:var(--muted);
       font-size:18px;
@@ -125,6 +122,7 @@
       font-size:44px;
       letter-spacing:2px;
       font-weight:900;
+      text-transform:uppercase;
     }
 
     @keyframes fadeIn{
@@ -132,7 +130,7 @@
       to{opacity:1; transform:scale(1);}
     }
 
-    /* RIGHT LIST */
+    /* Right List */
     .list{ margin:0; padding:0; list-style:none; display:grid; gap:8px; }
     .pill{
       border:1px solid rgba(184,77,255,.25);
@@ -146,7 +144,7 @@
     .pill b{ color:var(--text); }
     .pill span{ color:var(--muted); }
 
-    /* Play again modal */
+    /* Play Again Modal */
     .overlay{
       position:fixed;
       inset:0;
@@ -171,15 +169,11 @@
       margin:0 0 8px;
       color:var(--purple);
       letter-spacing:.6px;
+      text-transform:uppercase;
     }
-    .modal p{
-      margin:0 0 14px;
-      color:var(--muted);
-    }
-    .smallBtns{
-      display:flex;
-      gap:10px;
-    }
+    .modal p{ margin:0 0 14px; color:var(--muted); }
+
+    .smallBtns{ display:flex; gap:10px; }
     .smallBtn{
       flex:1;
       padding:10px;
@@ -189,6 +183,7 @@
       cursor:pointer;
       font-weight:700;
       transition:.2s;
+      user-select:none;
     }
     .smallBtn:hover{
       background: linear-gradient(180deg, rgba(184,77,255,.12), rgba(122,44,255,.06));
@@ -204,22 +199,19 @@
     </div>
 
     <div class="grid">
-      <!-- LEFT SIDE: UI GAME -->
+      <!-- LEFT SIDE GAME -->
       <div class="card">
         <h3>Game</h3>
 
-        <div class="questionArea" id="screen">
-          Think of a celebrity from the list.<br><br>
-          Is your celebrity male?
-        </div>
+        <div class="questionArea" id="screen">Loading...</div>
 
-        <div class="buttons">
-          <div class="btn" onclick="pressYes()">YES</div>
-          <div class="btn" onclick="pressNo()">NO</div>
+        <div class="buttons" id="ynButtons">
+          <div class="btn" onclick="uiYes()">YES</div>
+          <div class="btn" onclick="uiNo()">NO</div>
         </div>
       </div>
 
-      <!-- RIGHT SIDE: LIST -->
+      <!-- RIGHT SIDE LIST -->
       <div class="card">
         <h3>Celebrities in Game</h3>
         <ul class="list">
@@ -260,101 +252,331 @@
     </div>
   </div>
 
-  <script>
-    // UI-only demo flow (no real C++ logic on GitHub Pages)
-    const demoQuestions = [
-      "Is your celebrity male?",
-      "Are they a cricketer?",
-      "Are they primarily known as a singer?",
-      "Have they worked in India?",
-      "Are they married?"
-    ];
+<script>
+/* =========================
+   1:1 PORT OF YOUR C++ LOGIC
+   ========================= */
 
-    // Demo guess list (rotates when user clicks NO on guess)
-    const demoGuesses = [
-      "Atif Aslam","Mahira Khan","Ayeza Khan","Feroz Khan","Danish Taimoor",
-      "Imran Abbas","Hamza Ali Abbasi","Sajal Aly","Asim Azhar","Hania Amir",
-      "Bilal Abbas","Ali Zafar","Saba Qamar","Yumna Zaidi","Shoaib Malik",
-      "Shahid Afridi","Babar Azam","Naseem Shah","Sana Javed","Sparrow"
-    ];
+/* People */
+const people = [
+  { name:"Atif Aslam", fact:{ is_male:true,is_singer:true,worked_in_india:true,worked_in_coke_studio:true,song_tajdare_haram:true,song_dil_diyan_gallan:true,married:true } },
+  { name:"Mahira Khan", fact:{ is_male:false,is_singer:false,worked_in_india:true,drama_humsafar:true,worked_with_shah_rukh:true,best_couple_fawad:true,married:true } },
+  { name:"Ayeza Khan", fact:{ is_male:false,is_singer:false,worked_in_india:false,drama_mere_pas_tum_ho:true,drama_pyare_afzal:true,married_to_danish:true,married:true } },
+  { name:"Feroz Khan", fact:{ is_male:true,is_singer:false,worked_in_india:false,drama_khaani:true,drama_khuda_aur_mohabbat:true,serious_roles:true,rel_with_sajal:true,married:true } },
+  { name:"Danish Taimoor", fact:{ is_male:true,is_singer:false,worked_in_india:false,drama_sher:true,serious_roles:true,husband_of_ayeza:true,married:true } },
+  { name:"Imran Abbas", fact:{ is_male:true,is_singer:false,worked_in_india:true,drama_khuda_aur_mohabbat:true,movie_creature_3d:true,married:false } },
+  { name:"Hamza Ali Abbasi", fact:{ is_male:true,is_singer:false,worked_in_india:false,drama_pyare_afzal:true,movie_maula_jutt:true,movie_jawani_phir_nahi_ani:true,married:true } },
+  { name:"Sajal Aly", fact:{ is_male:false,is_singer:false,worked_in_india:false,drama_yaqeen_ka_safar:true,married_ahad_then_divorced:true,married:false } },
+  { name:"Asim Azhar", fact:{ is_male:true,is_singer:true,worked_in_india:true,worked_in_coke_studio:true,song_tera_woh_pyar:true,wears_glasses:true,engaged_meerub:true,married:false } },
+  { name:"Hania Amir", fact:{ is_male:false,is_singer:false,worked_in_india:false,drama_kabhi_main_kabhi_tum:true,rel_with_asim:true,married:false } },
+  { name:"Bilal Abbas", fact:{ is_male:true,is_singer:false,worked_in_india:false,drama_ishq_murshid:true,married:false } },
+  { name:"Ali Zafar", fact:{ is_male:true,is_singer:true,worked_in_india:true,song_provinces_pakistan:true,movie_mere_brother_ki_dulhan:true,married:false } },
+  { name:"Saba Qamar", fact:{ is_male:false,is_singer:false,worked_in_india:true,drama_baaghi:true,strong_female_roles:true,movie_hindi_medium:true,married:false } },
+  { name:"Yumna Zaidi", fact:{ is_male:false,is_singer:false,worked_in_india:false,drama_tere_bin:true,drama_sinf_e_ahan:true,best_couple_wahaj:true,married:false } },
+  { name:"Shoaib Malik", fact:{ is_male:true,is_cricketer:true,retired:true,ex_husband_of_sania:true,married_to_sana_javed:true,married:true } },
+  { name:"Shahid Afridi", fact:{ is_male:true,is_cricketer:true,retired:true,son_in_law_shaheen:true,nickname_lala_boom_boom:true,pathan:true,married:true } },
+  { name:"Babar Azam", fact:{ is_male:true,is_cricketer:true,ex_captain_pakistan:true,meme_with_hania:true,trolled_weak_english:true,married:false } },
+  { name:"Naseem Shah", fact:{ is_male:true,is_cricketer:true,clean_shaved:true,rumoured_with_urvashi:true,married:false } },
+  { name:"Sana Javed", fact:{ is_male:false,is_singer:false,worked_in_india:false,drama_khaani:true,ex_husband_umair_jaiswal:true,married_to_shoaib_malik:true,married:true } },
+  { name:"Sparrow", fact:{ is_male:true,is_influencer:true,makes_instagram_reels:true,wears_abaya:true,dialogue_hum_mazhabi_gharane:true,dialogue_ouch_ouch:true,married:false } },
+];
 
-    let qIndex = 0;
-    let gIndex = 0;
-    let phase = "questions"; // "questions" or "guess"
+/* Questions (same keys/prompts/is_general) */
+const questions = [
+  {key:"is_male",prompt:"Is your celebrity male?",is_general:true},
+  {key:"is_singer",prompt:"Are they primarily known as a singer?",is_general:true},
+  {key:"worked_in_india",prompt:"Have they worked in India / Indian projects?",is_general:true},
 
-    const screen = document.getElementById("screen");
-    const overlay = document.getElementById("overlay");
+  {key:"worked_in_coke_studio",prompt:"Have they worked in Coke Studio?",is_general:false},
+  {key:"wears_glasses",prompt:"Do they often wear glasses?",is_general:false},
+  {key:"married",prompt:"Are they married?",is_general:false},
 
-    function showQuestion(){
-      phase = "questions";
-      screen.innerHTML = demoQuestions[qIndex];
+  {key:"song_tajdare_haram",prompt:"Is their signature song 'Tajdar-e-Haram'?",is_general:false},
+  {key:"song_dil_diyan_gallan",prompt:"Is their signature song 'Dil Diyan Gallan'?",is_general:false},
+  {key:"song_tera_woh_pyar",prompt:"Is their signature song 'Tera Woh Pyar'?",is_general:false},
+  {key:"song_provinces_pakistan",prompt:"Are they famous for songs about all provinces of Pakistan?",is_general:false},
+
+  {key:"drama_humsafar",prompt:"Is their signature drama 'Humsafar'?",is_general:false},
+  {key:"drama_mere_pas_tum_ho",prompt:"Is their signature drama 'Mere Paas Tum Ho'?",is_general:false},
+  {key:"drama_khaani",prompt:"Is their signature drama 'Khaani'?",is_general:false},
+  {key:"drama_sher",prompt:"Is their signature drama 'Sher'?",is_general:false},
+  {key:"drama_khuda_aur_mohabbat",prompt:"Is their signature drama 'Khuda Aur Mohabbat'?",is_general:false},
+  {key:"drama_pyare_afzal",prompt:"Is their signature drama 'Pyare Afzal'?",is_general:false},
+  {key:"drama_yaqeen_ka_safar",prompt:"Is their signature drama 'Yaqeen Ka Safar'?",is_general:false},
+  {key:"drama_kabhi_main_kabhi_tum",prompt:"Is their signature drama 'Kabhi Main Kabhi Tum'?",is_general:false},
+  {key:"drama_ishq_murshid",prompt:"Is their signature drama 'Ishq Murshid'?",is_general:false},
+  {key:"drama_baaghi",prompt:"Is their signature drama 'Baaghi'?",is_general:false},
+
+  {key:"drama_tere_bin",prompt:"Is their signature drama 'Tere Bin'?",is_general:false},
+  {key:"drama_sinf_e_ahan",prompt:"Have they worked in the drama 'Sinf-e-Aahan'?",is_general:false},
+  {key:"best_couple_wahaj",prompt:"Are they famous as an on-screen couple with Wahaj Ali?",is_general:false},
+
+  {key:"is_cricketer",prompt:"Are they known as a cricketer?",is_general:true},
+  {key:"retired",prompt:"Are they retired?",is_general:false},
+  {key:"ex_husband_of_sania",prompt:"Are they the ex-husband of Sania Mirza?",is_general:false},
+  {key:"married_to_sana_javed",prompt:"Are they married to Sana Javed?",is_general:false},
+  {key:"son_in_law_shaheen",prompt:"Is their son-in-law Shaheen Afridi?",is_general:false},
+  {key:"nickname_lala_boom_boom",prompt:"Are they known as 'Lala / Boom Boom'?",is_general:false},
+  {key:"pathan",prompt:"Are they Pathan?",is_general:false},
+  {key:"ex_captain_pakistan",prompt:"Were they an ex-captain of Pakistan?",is_general:false},
+  {key:"meme_with_hania",prompt:"Are they famous for a meme-relationship with Hania Amir?",is_general:false},
+  {key:"trolled_weak_english",prompt:"Are they trolled for weak English?",is_general:false},
+  {key:"clean_shaved",prompt:"Are they known for being clean-shaved?",is_general:false},
+  {key:"rumoured_with_urvashi",prompt:"Were they rumoured to be in a relationship with Urvashi Rautela?",is_general:false},
+
+  {key:"married_to_shoaib_malik",prompt:"Are they married to Shoaib Malik?",is_general:false},
+  {key:"ex_husband_umair_jaiswal",prompt:"Were they previously married to Umair Jaiswal?",is_general:false},
+
+  {key:"is_influencer",prompt:"Are they an influencer / content creator?",is_general:true},
+  {key:"makes_instagram_reels",prompt:"Do they make Instagram reels?",is_general:false},
+  {key:"wears_abaya",prompt:"Do they wear an abaya in their videos?",is_general:false},
+  {key:"dialogue_hum_mazhabi_gharane",prompt:"Are they known for the dialogue 'Hum Mazhabi Gharane Se Hain'?",is_general:false},
+  {key:"dialogue_ouch_ouch",prompt:"Are they known for saying 'Ouch Ouch' in videos?",is_general:false},
+
+  {key:"worked_with_shah_rukh",prompt:"Have they worked with Shah Rukh Khan?",is_general:false},
+  {key:"best_couple_fawad",prompt:"Are they best known as an on-screen couple with Fawad Khan?",is_general:false},
+  {key:"married_to_danish",prompt:"Are they married to Danish Taimoor?",is_general:false},
+  {key:"husband_of_ayeza",prompt:"Are they Ayeza Khan's husband?",is_general:false},
+  {key:"rel_with_sajal",prompt:"Were they in a relationship with Sajal Aly?",is_general:false},
+  {key:"rel_with_asim",prompt:"Were they in a relationship with Asim Azhar?",is_general:false},
+  {key:"engaged_meerub",prompt:"Were they engaged to Meerub Ali?",is_general:false},
+  {key:"married_ahad_then_divorced",prompt:"Were they married to Ahad Raza Mir (and later divorced)?",is_general:false},
+
+  {key:"serious_roles",prompt:"Are they mainly known for serious roles?",is_general:false},
+  {key:"strong_female_roles",prompt:"Are they known for strong female personality roles?",is_general:false},
+
+  {key:"movie_creature_3d",prompt:"Did they work in the Indian movie 'Creature 3D'?",is_general:false},
+  {key:"movie_maula_jutt",prompt:"Were they in the movie 'Maula Jatt'?",is_general:false},
+  {key:"movie_jawani_phir_nahi_ani",prompt:"Were they in 'Jawani Phir Nahi Ani'?",is_general:false},
+  {key:"movie_mere_brother_ki_dulhan",prompt:"Did they work in 'Mere Brother Ki Dulhan'?",is_general:false},
+  {key:"movie_hindi_medium",prompt:"Did they work in the movie 'Hindi Medium'?",is_general:false},
+];
+
+/* ===== State (same as play_one_round) ===== */
+let candidates = [];
+let asked = new Set();
+let known = {}; // key->"yes"/"no" (but we store boolean too)
+let phase = "asking"; // "asking" | "guessing" | "done"
+let currentQuestion = null;
+let currentGuess = null;
+
+const CLOSE_THRESHOLD = 3;
+const SHOWY_QUESTIONS = 3;
+let closeExtraAsked = 0;
+
+const screen = document.getElementById("screen");
+const overlay = document.getElementById("overlay");
+
+/* ===== Helpers ===== */
+function filter_candidates_js(cands, key, ansBool){
+  const out = [];
+  for(const idx of cands){
+    const f = people[idx].fact;
+    if(!(key in f)) out.push(idx);
+    else if(f[key] === ansBool) out.push(idx);
+  }
+  return out;
+}
+
+function best_guess_js(cands){
+  let bestIdx = cands[0], bestScore = -1;
+  for(const idx of cands){
+    let score = 0;
+    for(const k in known){
+      const want = known[k];
+      const f = people[idx].fact;
+      if(!(k in f)) continue;
+      if(f[k] === want) score++;
+    }
+    if(score > bestScore){
+      bestScore = score;
+      bestIdx = idx;
+    }
+  }
+  return bestIdx;
+}
+
+function is_showy_key_js(k){
+  if(k.startsWith("drama_")) return true;
+  if(k.startsWith("movie_")) return true;
+  if(k.startsWith("song_"))  return true;
+  if(k.startsWith("rel_"))   return true;
+  if(k === "is_cricketer") return true;
+  if(k === "is_influencer") return true;
+  if(k.includes("married")) return true;
+  if(k.includes("engaged")) return true;
+  if(k.includes("spouse"))  return true;
+  if(k.includes("husband")) return true;
+  if(k.includes("wife"))    return true;
+  if(k.includes("couple"))  return true;
+  if(k.includes("nickname"))return true;
+  if(k.includes("meme"))    return true;
+  if(k.includes("trolled")) return true;
+  if(k.includes("abaya"))   return true;
+  if(k.includes("dialogue"))return true;
+  return false;
+}
+
+/* C++ ask_one_question() selection logic */
+function pick_best_question(close_mode){
+  let bestQ = null;
+  let bestScore = -1;
+
+  for(const q of questions){
+    if(asked.has(q.key)) continue;
+
+    if(close_mode){
+      if(q.is_general) continue;
+      if(!is_showy_key_js(q.key)) continue;
     }
 
-    function showGuess(){
-      phase = "guess";
-      const name = demoGuesses[gIndex];
-      screen.innerHTML = `
-        <div class="guessBox">
-          <div class="small">I think you are talking about...</div>
-          <div class="bigName">${name}</div>
-        </div>
-      `;
+    let t=0,f=0,u=0;
+    for(const idx of candidates){
+      const facts = people[idx].fact;
+      if(!(q.key in facts)) u++;
+      else if(facts[q.key]) t++;
+      else f++;
+    }
+    if(u > candidates.length * 0.7) continue;
+
+    const split = Math.min(t, f);
+    let score = split * 10 - u;
+
+    if(!close_mode && q.is_general) score += 2;
+
+    if(close_mode){
+      if(q.key.startsWith("rel_")) score += 25;
+      if(q.key.includes("married")) score += 25;
+      if(q.key.includes("engaged")) score += 20;
+      if(q.key.startsWith("drama_")) score += 15;
+      if(q.key.startsWith("movie_")) score += 12;
+      if(q.key.startsWith("song_"))  score += 10;
+      if(q.key === "is_cricketer") score += 18;
+      if(q.key === "is_influencer") score += 18;
+      if(q.key.includes("dialogue")) score += 14;
+      if(q.key.includes("abaya")) score += 14;
+      if(q.key.includes("nickname")) score += 14;
     }
 
-    function pressYes(){
-      if(phase === "questions"){
-        qIndex++;
-        if(qIndex < demoQuestions.length){
-          showQuestion();
-        }else{
-          showGuess();
-        }
+    if(score > bestScore){
+      bestScore = score;
+      bestQ = q;
+    }
+  }
+  return bestQ;
+}
+
+function show_question(q){
+  phase = "asking";
+  currentQuestion = q;
+  screen.innerHTML = q.prompt;
+}
+
+function show_guess(name){
+  phase = "guessing";
+  screen.innerHTML = `
+    <div class="guessBox">
+      <div class="small">I think you are talking about...</div>
+      <div class="bigName">${name}</div>
+    </div>
+  `;
+}
+
+function step_forward(){
+  if(candidates.length === 0){
+    screen.innerHTML = "Hmm, I couldn't match it. Add more facts.";
+    phase = "done";
+    return;
+  }
+
+  if(candidates.length <= CLOSE_THRESHOLD){
+    // ask 1..3 showy questions before guessing
+    if(closeExtraAsked < SHOWY_QUESTIONS && candidates.length > 1){
+      const q = pick_best_question(true);
+      if(q){
+        closeExtraAsked++;
+        show_question(q);
         return;
       }
-
-      // phase === "guess" and YES means correct
-      overlay.classList.add("show");
     }
 
-    function pressNo(){
-      if(phase === "questions"){
-        qIndex++;
-        if(qIndex < demoQuestions.length){
-          showQuestion();
-        }else{
-          showGuess();
-        }
-        return;
-      }
+    currentGuess = best_guess_js(candidates);
+    show_guess(people[currentGuess].name);
+    return;
+  }
 
-      // phase === "guess" and NO means wrong -> rotate guess and keep going
-      gIndex = (gIndex + 1) % demoGuesses.length;
+  // normal mode
+  const q = pick_best_question(false);
+  if(!q){
+    currentGuess = best_guess_js(candidates);
+    show_guess(people[currentGuess].name);
+    return;
+  }
 
-      // After wrong guess, continue with 1-2 more questions then guess again (UI feel)
-      qIndex = Math.max(demoQuestions.length - 2, 0);
-      showQuestion();
-    }
+  show_question(q);
+}
 
-    function playAgainYes(){
-      overlay.classList.remove("show");
-      qIndex = 0;
-      gIndex = 0;
-      showQuestion();
-    }
+/* Button handlers */
+function apply_answer(ansBool){
+  if(phase !== "asking" || !currentQuestion) return;
 
-    function playAgainNo(){
-      overlay.classList.remove("show");
-      screen.innerHTML = `
-        <div class="guessBox">
-          <div class="small">Thank you for playing!</div>
-          <div class="bigName">FameFinder</div>
-        </div>
-      `;
-      phase = "done";
-    }
+  asked.add(currentQuestion.key);
+  known[currentQuestion.key] = ansBool;
 
-    // Start
-    showQuestion();
-  </script>
+  candidates = filter_candidates_js(candidates, currentQuestion.key, ansBool);
+
+  step_forward();
+}
+
+window.uiYes = function(){
+  if(phase === "guessing"){
+    overlay.classList.add("show");
+    return;
+  }
+  apply_answer(true);
+}
+
+window.uiNo = function(){
+  if(phase === "guessing"){
+    // wrong guess -> remove and continue (THIS FIXES YOUR PROBLEM)
+    candidates = candidates.filter(x => x !== currentGuess);
+    closeExtraAsked = 0; // same vibe as your loop continues
+    currentGuess = null;
+    step_forward();
+    return;
+  }
+  apply_answer(false);
+}
+
+window.playAgainYes = function(){
+  overlay.classList.remove("show");
+  startNewGame();
+}
+
+window.playAgainNo = function(){
+  overlay.classList.remove("show");
+  phase = "done";
+  screen.innerHTML = `
+    <div class="guessBox">
+      <div class="small">Thank you for playing!</div>
+      <div class="bigName">FameFinder</div>
+    </div>
+  `;
+}
+
+function startNewGame(){
+  candidates = people.map((_, i) => i);
+  asked = new Set();
+  known = {};
+  closeExtraAsked = 0;
+  currentQuestion = null;
+  currentGuess = null;
+  phase = "asking";
+  step_forward();
+}
+
+/* Start */
+startNewGame();
+</script>
 </body>
 </html>
