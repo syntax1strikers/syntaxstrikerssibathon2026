@@ -236,3 +236,111 @@ static void init_people(){
         {"married", false}
     });
 }
+static void show_celeb_list(){
+    cout << "Celebrities in this game:\n";
+    for(size_t i=0;i<people.size();i++){
+        cout << " - " << people[i].name << "\n";
+    }
+    cout << "\n";
+}
+
+static vector<int> filter_candidates(const vector<int> &cands, const string &key, const string &answer){
+    if(answer == "unknown") return cands;
+    if(answer != "yes" && answer != "no") return cands;
+
+    bool want = (answer == "yes");
+    vector<int> out;
+    out.reserve(cands.size());
+
+    for(int idx : cands){
+        auto it = people[idx].fact.find(key);
+        if(it == people[idx].fact.end()) out.push_back(idx);
+        else if(it->second == want) out.push_back(idx);
+    }
+    return out;
+}
+
+static int best_guess(const vector<int> &cands, const unordered_map<string,string> &known){
+    int bestIdx = cands[0], bestScore = -1;
+
+    for(int idx : cands){
+        int score = 0;
+        for(const auto &kv : known){
+            if(kv.second != "yes" && kv.second != "no") continue;
+            auto it = people[idx].fact.find(kv.first);
+            if(it == people[idx].fact.end()) continue;
+            bool want = (kv.second == "yes");
+            if(it->second == want) score++;
+        }
+        if(score > bestScore){
+            bestScore = score;
+            bestIdx = idx;
+        }
+    }
+    return bestIdx;
+}
+
+static bool is_showy_key(const string &k){
+    if(k.rfind("drama_", 0) == 0) return true;
+    if(k.rfind("movie_", 0) == 0) return true;
+    if(k.rfind("song_",  0) == 0) return true;
+    if(k.rfind("rel_",   0) == 0) return true;
+    if(k == "is_cricketer") return true;
+    if(k == "is_influencer") return true;
+    if(k.find("married") != string::npos) return true;
+    if(k.find("engaged") != string::npos) return true;
+    if(k.find("spouse")  != string::npos) return true;
+    if(k.find("husband") != string::npos) return true;
+    if(k.find("wife")    != string::npos) return true;
+    if(k.find("couple")  != string::npos) return true;
+    if(k.find("nickname")!= string::npos) return true;
+    if(k.find("meme")    != string::npos) return true;
+    if(k.find("trolled") != string::npos) return true;
+    if(k.find("abaya")   != string::npos) return true;
+    if(k.find("dialogue")!= string::npos) return true;
+    return false;
+}
+
+static bool ask_one_question(vector<int> &candidates,
+                             unordered_set<string> &asked,
+                             unordered_map<string,string> &known,
+                             bool close_mode)
+{
+    int bestQ = -1, bestScore = -1;
+
+    for(int qi = 0; qi < (int)questions.size(); qi++){
+        const auto &q = questions[qi];
+        if(asked.count(q.key)) continue;
+
+        if(close_mode){
+            if(q.is_general) continue;
+            if(!is_showy_key(q.key)) continue;
+        }
+
+        int t=0, f=0, u=0;
+        for(int idx : candidates){
+            auto it = people[idx].fact.find(q.key);
+            if(it == people[idx].fact.end()) u++;
+            else if(it->second) t++;
+            else f++;
+        }
+        if(u > (int)candidates.size() * 0.7) continue;
+
+        int split = min(t, f);
+        int score = split * 10 - u;
+
+        if(!close_mode && q.is_general) score += 2;
+
+        if(close_mode){
+            if(q.key.rfind("rel_", 0) == 0) score += 25;
+            if(q.key.find("married") != string::npos) score += 25;
+            if(q.key.find("engaged") != string::npos) score += 20;
+            if(q.key.rfind("drama_", 0) == 0) score += 15;
+            if(q.key.rfind("movie_", 0) == 0) score += 12;
+            if(q.key.rfind("song_",  0) == 0) score += 10;
+            if(q.key == "is_cricketer") score += 18;
+            if(q.key == "is_influencer") score += 18;
+            if(q.key.find("dialogue") != string::npos) score += 14;
+            if(q.key.find("abaya") != string::npos) score += 14;
+            if(q.key.find("nickname") != string::npos) score += 14;
+        }
