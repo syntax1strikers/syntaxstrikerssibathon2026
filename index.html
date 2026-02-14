@@ -1,168 +1,210 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pakistani Celebrity Akinator (C++)</title>
-  <style>
-    :root{
-      --bg:#000;
-      --panel:#0b0013;
-      --panel2:#12001f;
-      --purple:#b84dff;
-      --text:#eadcff;
-      --muted:#c9b2ea;
-      --border:rgba(184,77,255,.35);
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FameFinder</title>
 
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-      background:
-        radial-gradient(900px 600px at 20% 10%, rgba(184,77,255,.18), transparent 55%),
-        radial-gradient(900px 600px at 80% 30%, rgba(122,44,255,.16), transparent 55%),
-        var(--bg);
-      color:var(--text);
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-    }
+<style>
+:root{
+  --bg:#000;
+  --panel:#0b0013;
+  --purple:#b84dff;
+  --purple-dark:#7a2cff;
+  --text:#eadcff;
+  --muted:#c9b2ea;
+  --border:rgba(184,77,255,.35);
+}
 
-    .wrap{ width:min(980px, 100%); display:grid; gap:18px; }
+*{ box-sizing:border-box; }
 
-    .header{
-      border:1px solid var(--border);
-      background: linear-gradient(180deg, rgba(184,77,255,.10), rgba(18,0,31,.75));
-      border-radius:16px;
-      padding:18px;
-      box-shadow: 0 20px 80px rgba(0,0,0,.65);
-    }
-    .title{
-      margin:0 0 6px;
-      color:var(--purple);
-      letter-spacing:.6px;
-      text-transform:uppercase;
-      font-size:22px;
-    }
-    .subtitle{ margin:0; color:var(--muted); line-height:1.5; }
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:
+    radial-gradient(800px 500px at 20% 10%, rgba(184,77,255,.15), transparent 60%),
+    radial-gradient(800px 500px at 80% 30%, rgba(122,44,255,.12), transparent 60%),
+    var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:30px;
+}
 
-    .grid{
-      display:grid;
-      gap:18px;
-      grid-template-columns: 1.2fr .8fr;
-    }
-    @media (max-width: 900px){ .grid{ grid-template-columns:1fr; } }
+.wrapper{
+  width:min(1100px,100%);
+  display:grid;
+  gap:20px;
+}
 
-    .card{
-      border:1px solid var(--border);
-      background: linear-gradient(180deg, rgba(11,0,19,.92), rgba(18,0,31,.75));
-      border-radius:16px;
-      padding:16px;
-    }
-    .card h3{
-      margin:0 0 10px;
-      color:var(--purple);
-      text-transform:uppercase;
-      font-size:13px;
-      letter-spacing:.7px;
-    }
-    .codebox{
-      border:1px solid rgba(184,77,255,.25);
-      background: rgba(0,0,0,.55);
-      border-radius:12px;
-      padding:12px;
-      overflow:auto;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      color:#eadcff;
-      font-size:13px;
-      line-height:1.5;
-    }
-    .list{ margin:0; padding:0; list-style:none; display:grid; gap:8px; }
-    .pill{
-      border:1px solid rgba(184,77,255,.25);
-      background: linear-gradient(180deg, rgba(184,77,255,.08), rgba(122,44,255,.06));
-      border-radius:12px;
-      padding:10px 12px;
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .pill b{ color:var(--text); }
-    .pill span{ color:var(--muted); }
+.header{
+  text-align:center;
+  padding:20px;
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:linear-gradient(180deg, rgba(184,77,255,.1), rgba(18,0,31,.8));
+}
 
-    .btn{
-      display:inline-block;
-      margin-top:10px;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(184,77,255,.35);
-      color:var(--text);
-      text-decoration:none;
-      background: linear-gradient(180deg, rgba(184,77,255,.12), rgba(122,44,255,.06));
-    }
-    .btn:hover{ filter:brightness(1.08); }
-  </style>
+.header h1{
+  margin:0;
+  font-size:32px;
+  letter-spacing:1px;
+  color:var(--purple);
+  text-transform:uppercase;
+}
+
+.main-grid{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:20px;
+}
+
+@media(max-width:900px){
+  .main-grid{ grid-template-columns:1fr; }
+}
+
+.card{
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:20px;
+  background:linear-gradient(180deg, rgba(11,0,19,.95), rgba(18,0,31,.8));
+}
+
+.question{
+  font-size:20px;
+  margin-bottom:20px;
+  min-height:60px;
+}
+
+.buttons{
+  display:flex;
+  gap:20px;
+}
+
+.btn{
+  flex:1;
+  padding:15px;
+  text-align:center;
+  border-radius:14px;
+  border:1px solid var(--border);
+  cursor:pointer;
+  font-weight:bold;
+  font-size:16px;
+  transition:0.2s;
+  user-select:none;
+}
+
+.btn-yes{
+  background:linear-gradient(180deg, rgba(184,77,255,.2), rgba(122,44,255,.2));
+}
+
+.btn-no{
+  background:linear-gradient(180deg, rgba(122,44,255,.15), rgba(184,77,255,.15));
+}
+
+.btn:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 15px rgba(184,77,255,.5);
+}
+
+.list{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:grid;
+  gap:10px;
+}
+
+.pill{
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(184,77,255,.25);
+  background:linear-gradient(180deg, rgba(184,77,255,.08), rgba(122,44,255,.06));
+  display:flex;
+  justify-content:space-between;
+}
+
+.pill span{
+  color:var(--muted);
+}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="header">
-      <h1 class="title">Pakistani Celebrity Akinator (C++)</h1>
-      <p class="subtitle">
-        Black + purple themed project page for my C++ guessing game.
-        The game code is in <b>main.cpp</b>.
-      </p>
-      <a class="btn" href="main.cpp">View C++ Source</a>
-    </div>
 
-    <div class="grid">
-      <div class="card">
-        <h3>How to Run</h3>
-        <div class="codebox">
-g++ -std=c++17 main.cpp -O2 -o game<br/>
-./game
-        </div>
-        <p class="subtitle" style="margin-top:10px">
-          Answer with <b>y/n</b> or <b>unknown</b>. The game will guess the celebrity.
-        </p>
-      </div>
+<div class="wrapper">
 
-      <div class="card">
-        <h3>Celebrities in Game</h3>
-        <ul class="list">
-          <li class="pill"><b>Atif Aslam</b><span>Singer</span></li>
-          <li class="pill"><b>Mahira Khan</b><span>Actor</span></li>
-          <li class="pill"><b>Ayeza Khan</b><span>Actor</span></li>
-          <li class="pill"><b>Feroz Khan</b><span>Actor</span></li>
-          <li class="pill"><b>Danish Taimoor</b><span>Actor</span></li>
-          <li class="pill"><b>Imran Abbas</b><span>Actor</span></li>
-          <li class="pill"><b>Hamza Ali Abbasi</b><span>Actor</span></li>
-          <li class="pill"><b>Sajal Aly</b><span>Actor</span></li>
-          <li class="pill"><b>Asim Azhar</b><span>Singer</span></li>
-          <li class="pill"><b>Hania Amir</b><span>Actor</span></li>
-          <li class="pill"><b>Bilal Abbas</b><span>Actor</span></li>
-          <li class="pill"><b>Ali Zafar</b><span>Singer</span></li>
-          <li class="pill"><b>Saba Qamar</b><span>Actor</span></li>
-          <li class="pill"><b>Yumna Zaidi</b><span>Actor</span></li>
-          <li class="pill"><b>Shoaib Malik</b><span>Cricketer</span></li>
-          <li class="pill"><b>Shahid Afridi</b><span>Cricketer</span></li>
-          <li class="pill"><b>Babar Azam</b><span>Cricketer</span></li>
-          <li class="pill"><b>Naseem Shah</b><span>Cricketer</span></li>
-          <li class="pill"><b>Sana Javed</b><span>Actor</span></li>
-          <li class="pill"><b>Sparrow</b><span>Influencer</span></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>Thank You</h3>
-      <p class="subtitle" style="margin:0">
-        This is my competition project page. My full logic is implemented in C++.
-      </p>
-    </div>
+  <div class="header">
+    <h1>FameFinder</h1>
   </div>
+
+  <div class="main-grid">
+
+    <!-- LEFT SIDE GAME -->
+    <div class="card">
+      <div class="question" id="question">
+        Think of a celebrity... <br><br>
+        Is your celebrity male?
+      </div>
+
+      <div class="buttons">
+        <div class="btn btn-yes" onclick="answer('yes')">YES</div>
+        <div class="btn btn-no" onclick="answer('no')">NO</div>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE LIST -->
+    <div class="card">
+      <h3 style="color:var(--purple); margin-top:0;">Celebrities in Game</h3>
+      <ul class="list">
+        <li class="pill">Atif Aslam <span>Singer</span></li>
+        <li class="pill">Mahira Khan <span>Actor</span></li>
+        <li class="pill">Ayeza Khan <span>Actor</span></li>
+        <li class="pill">Feroz Khan <span>Actor</span></li>
+        <li class="pill">Danish Taimoor <span>Actor</span></li>
+        <li class="pill">Imran Abbas <span>Actor</span></li>
+        <li class="pill">Hamza Ali Abbasi <span>Actor</span></li>
+        <li class="pill">Sajal Aly <span>Actor</span></li>
+        <li class="pill">Asim Azhar <span>Singer</span></li>
+        <li class="pill">Hania Amir <span>Actor</span></li>
+        <li class="pill">Bilal Abbas <span>Actor</span></li>
+        <li class="pill">Ali Zafar <span>Singer</span></li>
+        <li class="pill">Saba Qamar <span>Actor</span></li>
+        <li class="pill">Yumna Zaidi <span>Actor</span></li>
+        <li class="pill">Shoaib Malik <span>Cricketer</span></li>
+        <li class="pill">Shahid Afridi <span>Cricketer</span></li>
+        <li class="pill">Babar Azam <span>Cricketer</span></li>
+        <li class="pill">Naseem Shah <span>Cricketer</span></li>
+        <li class="pill">Sana Javed <span>Actor</span></li>
+        <li class="pill">Sparrow <span>Influencer</span></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let questions = [
+  "Is your celebrity male?",
+  "Are they a cricketer?",
+  "Are they primarily known as a singer?",
+  "Have they worked in India?"
+];
+
+let current = 0;
+
+function answer(choice){
+  current++;
+  if(current < questions.length){
+    document.getElementById("question").innerHTML = questions[current];
+  } else {
+    document.getElementById("question").innerHTML =
+      "I think I know who it is... 😏";
+  }
+}
+</script>
+
 </body>
 </html>
